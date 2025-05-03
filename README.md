@@ -2,85 +2,79 @@
 
 ## 🔗 Table of Contents
 
-### [📅 Day 1](#-day-1)
+- [📅 Day 1](#-day-1)
 
-### [📅 Day 2](#-day-2)
+- [📅 Day 2](#-day-2)
 
-### [📅 Day 3](#-day-3)
+- [📅 Day 3](#-day-3)
 
-### [📅 Day 4](#-day-4)
+- [📅 Day 4](#-day-4)
 
-### [📅 Day 5](#-day-5)
+- [📅 Day 5](#-day-5)
 
-### [📅 Day 6](#-day-6)
+- [📅 Day 6](#-day-6)
 
-### [📅 Day 7](#-day-7)
+- [📅 Day 7](#-day-7)
 
-### [📅 Day 8](#-day-8)
+- [📅 Day 8](#-day-8)
 
-### [📅 Day 9](#-day-9)
+- [📅 Day 9](#-day-9--supabase--sequelize--env-setup)
 
-### [ 📅 Day 10 – Supabase + Sequelize + .env Setup](#-day-10--supabase--sequelize--env-setup)
+- [ 📅 Day 10 – Lessions](#-day-10--lessons)
 
 ---
 
 Here Are the contentss
 
-### 📅 Day 1
+## 📅 Day 1
 
 - DAY 1
 
 ---
 
-### 📅 Day 2
+## 📅 Day 2
 
 - DAY 2
 
 ---
 
-### 📅 Day 3
+## 📅 Day 3
 
 - DAY 3
 
 ---
 
-### 📅 Day 4
+## 📅 Day 4
 
 - DAY 4
 
 ---
 
-### 📅 Day 5
+## 📅 Day 5
 
 - DAY 5
 
 ---
 
-### 📅 Day 6
+## 📅 Day 6
 
 - DAY 6
 
 ---
 
-### 📅 Day 7
+## 📅 Day 7
 
 - DAY 7
 
 ---
 
-### 📅 Day 8
+## 📅 Day 8
 
 - DAY 8
 
 ---
 
-### 📅 Day 9
-
-- DAY 9
-
----
-
-### 📅 Day 10 – Supabase + Sequelize + .env Setup
+## 📅 Day 9 – Supabase + Sequelize + .env Setup
 
 - [📦 Packages Used](####-📦-Packages-Used)
 - [✅ 1. Install Dependencies](####️-1-install-dependencies)
@@ -96,11 +90,11 @@ This guide covers how to connect a Supabase PostgreSQL database to a Node.js bac
 
 #### 📦 Packages Used
 
-| Package     | Purpose                           |
-| ----------- | --------------------------------- |
-| `pg`        | PostgreSQL driver for Node.js     |
-| `sequelize` | ORM to interact with PostgreSQL   |
-| `dotenv`    | Load environment variables safely |
+| Package                                                       | Purpose                           |
+| ------------------------------------------------------------- | --------------------------------- |
+| [`pg`](https://www.npmjs.com/package/pg)                      | PostgreSQL driver for Node.js     |
+| [`sequelize`](https://sequelize.org/docs/v6/getting-started/) | ORM to interact with PostgreSQL   |
+| [`dotenv`](https://www.npmjs.com/package/dotenv)              | Load environment variables safely |
 
 #### ✅ 1. Install Dependencies
 
@@ -200,3 +194,172 @@ node_modules/
 - ✅ Sequelize helps structure and scale database access.
 - ✅ Using .env keeps sensitive info safe and configurable.
 - 🔁 You can add more keys like PORT, JWT_SECRET, etc. in .env as your project grows.
+
+---
+
+## 📅 Day 10 – Lessons
+
+- covered : `Database Models(Tables)`, `Database(Sequelize) Migration`
+
+### 🧠 Code First vs. Database First (Sequelize)
+
+#### 1. 📌 Code First
+
+In this approach, you write models in code first, and Sequelize creates tables in the database.
+
+##### ✅ Steps
+
+1. Define your models using Sequelize.
+2. Run `sequelize.sync()` or use migrations to create tables.
+
+##### 📦 Example
+
+```js
+// models/book.model.js
+const Book = sequelize.define("Book", {
+  title: DataTypes.STRING,
+  author: DataTypes.STRING,
+});
+sequelize.sync(); // creates table based on model
+```
+
+##### 📍 Use When
+
+- Starting a new project.
+- You want full control of database structure through code.
+
+#### 2. 🗃️ Database First
+
+In this approach, the database already exists and you generate Sequelize models from it.
+
+#### ✅ Steps
+
+- Set up your database manually (or it already exists).
+- Use a CLI tool like sequelize-auto to generate models.
+
+```bash
+npx sequelize-auto -o "./models" -d dbname -h host -u user -p port -x password -e postgres
+```
+
+#### 📍 Use When
+
+- Working with an existing or legacy database.
+- DB schema is managed by someone else.
+
+### 🔍 Comparison
+
+| Feature     | Code First    | Database First  |
+| ----------- | ------------- | --------------- |
+| Starts With | Code (models) | Database schema |
+| Tools       | Sequelize     | sequelize-auto  |
+| Best For    | New projects  | Existing DBs    |
+
+### ✅ Sequelize Migration (Code-first)
+
+#### 🧠 What is it?
+
+- Migration here means creating actual tables in your database based on your defined models (book.model.js, etc.).
+
+#### 🛠️ Code to Migrate Models
+
+- Create `database/model/book.model.js`:
+
+```js
+const bookModel1 = (sequelize, DataTypes) => {
+  // Define the "book" table
+  const Book = sequelize.define("book", {
+    bookName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    bookPrice: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    bookGenre: {
+      type: DataTypes.STRING,
+    },
+    // Author name - optional, with a default value
+    bookAuthor: {
+      type: DataTypes.STRING,
+      defaultValue: "unknown-book-author",
+    },
+  });
+
+  return Book;
+};
+
+module.exports = bookModel1;
+```
+
+- Create a file like `database/connection.js` or put this logic in app.js:
+
+```js
+// database connection code/logic
+const { Sequelize, DataTypes } = require("sequelize");
+const sequelize = new Sequelize(process.env.cs);
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Authentication successful");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+const db = {
+  Sequelize: Sequelize,
+  sequelize: sequelize,
+};
+
+// 2. Shorthand trigger  -> require('./models/book.model')(Args)
+db.book = require("./models/book.model")(sequelize, DataTypes);
+// migrate code / database
+sequelize.sync({ force: false }).then(() => {
+  console.log("database has been migrated");
+});
+module.exports = db;
+```
+
+#### 🚀 Run the Migration
+
+```bash
+node connection.js
+# OR
+npm start
+# npm start (node app.js) -> will run connection.js when you require() it.
+```
+
+### 📘 Sequelize Sync: `force: true` vs `force: false`
+
+```js
+sequelize.sync({ force: false }).then(() => {});
+```
+
+#### 🔧 Purpose
+
+| Option         | Description                                                                    |
+| -------------- | ------------------------------------------------------------------------------ |
+| `force: true`  | **Drops and recreates** all tables on every run (⚠️ data will be lost).        |
+| `force: false` | **Default.** Creates tables only if they don't exist (🟢 safe for production). |
+
+#### ⚠️ When to Use
+
+| Use Case                         | `force` Setting |
+| -------------------------------- | --------------- |
+| First-time development/testing   | `force: true`   |
+| Already deployed / production DB | `force: false`  |
+
+#### 📘 Sequelize Sync: `force: true` vs `alter: false`
+
+| Option        | Behavior                                                              |
+| ------------- | --------------------------------------------------------------------- |
+| `force: true` | 🔄 Drops and recreates all tables. All data will be lost.             |
+| `alter: true` | 🔧 Alters tables to match models, **without** deleting existing data. |
+
+
+#### 📝 When to Use?
+| Use Case                        | Use                      |
+| ------------------------------- | ------------------------ |
+| Updating table structure safely | `alter: true`            |
+| Avoiding any accidental changes | `alter: false` (default) |
+- 🔐 Note: `alter` is safer than `force`, but still not recommended for critical production systems unless you’re sure about the change.
