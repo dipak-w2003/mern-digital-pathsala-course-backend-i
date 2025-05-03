@@ -11,20 +11,14 @@ sequelize
     console.log(err);
   });
 
-const db = {
-  Sequelize: Sequelize,
-  sequelize: sequelize,
-};
-
-// ? Trigger Our Models / Schema / Tables functions
-// 1. Normal trigger -> const bookModel1 = require("./models/book.model") then bookModel1(Args)
-// 2. Shorthand trigger  -> require('./models/book.model')(Args)
-
-db.book = require("./models/book.model")(sequelize, DataTypes);
-db.user = require("./models/user.model")(sequelize, DataTypes);
-db.product = require("./models/product.model")(sequelize, DataTypes);
+const db = {};
+(db.Sequelize = Sequelize),
+  (db.sequelize = sequelize), 
+  (db.books = require("./models/book.model")(sequelize, DataTypes));
+db.users = require("./models/user.model")(sequelize, DataTypes);
+db.products = require("./models/product.model")(sequelize, DataTypes);
 // migrate code / database
-sequelize.sync({ force: false }).then(() => {
+sequelize.sync({ alter: false }).then(() => {
   console.log("database has been migrated");
 });
 module.exports = db;

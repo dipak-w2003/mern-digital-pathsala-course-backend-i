@@ -356,10 +356,141 @@ sequelize.sync({ force: false }).then(() => {});
 | `force: true` | 🔄 Drops and recreates all tables. All data will be lost.             |
 | `alter: true` | 🔧 Alters tables to match models, **without** deleting existing data. |
 
-
 #### 📝 When to Use?
+
 | Use Case                        | Use                      |
 | ------------------------------- | ------------------------ |
 | Updating table structure safely | `alter: true`            |
 | Avoiding any accidental changes | `alter: false` (default) |
+
 - 🔐 Note: `alter` is safer than `force`, but still not recommended for critical production systems unless you’re sure about the change.
+
+---
+
+## 📅 Day 11 - MVC & Folder Structure
+
+- MVC Architecture,
+- Postman : API Testing + Integrating data to supabase
+
+## 📘 MVC Pattern – (Model View Controller)
+
+The MVC pattern is a software design pattern that separates the application logic into three interconnected components:
+
+### 📦 Folder Structure (Example)
+
+```bash
+project/
+│
+├── controllers/     # Logic
+│   └── book.controller.js
+│
+├── models/          # Database
+│   └── book.model.js
+│
+├── routes/          # Routes
+│   └── book.routes.js
+│
+├── database/        # DB connection
+│   └── connection.js
+│
+├── app.js           # Entry point
+└── .env
+
+```
+
+### 🔍 Components Explained
+
+| Part           | Description                                                             |
+| -------------- | ----------------------------------------------------------------------- |
+| **Model**      | Manages the data and database logic (e.g., Sequelize models).           |
+| **View**       | Handles UI or response (Not always used in API-based backend apps).     |
+| **Controller** | Contains the business logic and calls Models; responds to user actions. |
+| **Routes**     | Connects URLs/endpoints to Controllers.                                 |
+
+#### 🛠️ Example Flow (Book API)
+
+- User makes a request to /books
+- Route in book.routes.js calls the correct function from the controller
+- Controller in book.controller.js gets data using the model
+- Model in book.model.js fetches data from the database
+- Controller sends response back to the user (as JSON)
+
+#### ✅ Benefits of MVC
+
+- Clean separation of concerns
+- Easier to scale and maintain
+- Promotes reusable and testable code
+
+## 🏗️ Common Software Architectures (Simple Overview)
+
+### 1. **MVC (Model-View-Controller)**
+
+- Model – Data + DB interaction
+- View – UI / Frontend
+- Controller – Logic & Request Handling
+- 📦 Common in: Node.js (Express), Django, Rails
+
+### 2. MVVM (Model-View-ViewModel)
+
+- Model – Data
+- View – UI
+- ViewModel – Middle layer that binds model and view
+- 📦 Common in: Angular, Vue (partially), WPF
+
+### 3. MVP (Model-View-Presenter)
+
+- Similar to MVC but the Presenter handles more logic and updates the view manually.
+- 📦 Common in: Android Java/Kotlin apps
+
+### 4. Three-Tier Architecture
+
+- Presentation Layer – UI (Frontend)
+- Business Logic Layer – Server Logic (Backend)
+- Data Layer – Database
+- 📦 Classic web app architecture (React + Express + PostgreSQL)
+
+### 5. Client-Server Architecture
+
+- Client (Frontend) – Browser or app sends request
+- Server (Backend) – Responds with data or HTML
+- 📦 All modern web apps follow this fundamentally
+
+### 6. Microservices
+
+- App is broken into small, independent services
+- Each service has its own DB and runs separately
+- 📦 Common in large-scale apps (Netflix, Uber)
+
+### 7. Monolithic Architecture
+
+- All logic (frontend, backend, DB) in one app/project
+- 📦 Good for small projects, easy to start
+
+### 8. Serverless Architecture
+
+- Functions run on cloud (like AWS Lambda)
+- No need to manage a server
+- 📦 Used for quick APIs, scheduled jobs
+
+### 9. Headless Architecture
+
+- Backend is separate and only provides APIs
+- Frontend fetches data using those APIs
+- 📦 Common with CMS like Strapi, Contentful + React/Next.js
+
+## 🎯 Which Should You Focus On First?
+
+| 🏗️ Architecture   | 🔰 Level       | 🧠 Importance     | 💡 Common Use Cases                        |
+| ----------------- | -------------- | ----------------- | ------------------------------------------ |
+| **MVC / MVT**     | Beginner → Pro | ⭐ Essential      | Express, Django, Laravel, Rails            |
+| **Three-Tier**    | Beginner → Pro | ⭐ Essential      | Full-stack projects (React + Node + DB)    |
+| **Client-Server** | All Levels     | ⭐ Essential      | REST APIs, GraphQL, browser-server systems |
+| **Microservices** | Advanced       | 🔥 Scalable       | Netflix, Uber, modular backend apps        |
+| **Serverless**    | Intermediate   | 🔥 Modern Cloud   | AWS Lambda, Vercel, Cloud Functions        |
+| **Headless**      | Intermediate   | 🔥 Frontend-Heavy | Strapi + React, Contentful + Next.js       |
+| **MVVM / MVP**    | Niche          | 💡 Special Use    | Angular apps, mobile (Kotlin, Android)     |
+| **Monolithic**    | Beginner       | ✅ Good to Start  | Single repo, basic web app, MVPs           |
+
+- ✅ Start with MVC, Three-Tier, and Client-Server to build a solid foundation. Then explore Microservices, Serverless, or Headless as your projects grow.
+
+## API Testing + Data for Supabase - Post Man
