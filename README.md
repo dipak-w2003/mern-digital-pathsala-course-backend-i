@@ -1,4 +1,4 @@
-# 📘 Course: Digital Pathsala
+# 📘 Course: Digital Pathsala : BACKEND I
 
 ## 🔗 Table of Contents
 
@@ -21,6 +21,8 @@
 - [📅 Day 9](#-day-9--supabase--sequelize--env-setup)
 
 - [ 📅 Day 10 – Lessions](#-day-10--lessons)
+- [ 📅 Day 11 – Lessions](#-day-11---mvcr-models-view-controller-routes--folder-structure)
+- [ 📅 Day 12 – Lessions](#-day-12--delete--update)
 
 ---
 
@@ -494,3 +496,135 @@ project/
 - ✅ Start with MVC, Three-Tier, and Client-Server to build a solid foundation. Then explore Microservices, Serverless, or Headless as your projects grow.
 
 ## API Testing + Data for Supabase - Post Man
+
+- Get Data
+- Post Data
+
+## 📅 Day 11 - MVCR (Models View Controller Routes) & Folder Structure
+
+A basic implementation of the MVCR (Model-View-Controller-Router) architectural pattern. This setup separates concerns for maintainability, scalability, and clarity.
+
+### 📁 Project Structure
+
+```bash
+.
+├── models/         # Data models (e.g., User.js, Task.js)
+├── views/          # Template or UI rendering logic (if applicable)
+├── controllers/    # Business logic and request handling
+├── routes/         # Route definitions and middleware
+├── public/         # Static assets (images, CSS, JS)
+├── app.js          # Main entry point
+├── config/         # Configuration (e.g., DB setup)
+└── README.md
+```
+
+### 🧱 Components
+
+- `Models` : Define database schema and data-related logic.
+- `Views` (Optional in API projects) : If used, contains HTML templates (e.g., EJS, Handlebars).
+- `Controllers` : Handles logic, interacts with models, and prepares responses.
+- `Routes` : Maps endpoints to controller functions.
+
+### Example 1: simple use of strcuture folders & files ::MVC+R
+
+1. controllers / `bookController.js`
+
+```js
+const { books } = require("../database/connection");
+// READ
+exports.fetchedBooks = async (req, res) => {
+  try {
+    const fetchedBooks = await books.findAll();
+    console.log(fetchedBooks);
+    res.status(200).json({
+      message: "Books fetched successfully!",
+      fetchedBooks,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch books." });
+  }
+};
+```
+
+2. Routes/ `bookRoute.js`
+
+```js
+const router = express.Router();
+const {
+  fetchedBooks,
+  addBook,
+  deleteBook,
+  updateBook,
+} = require("../controllers/bookController");
+
+// Routes
+router
+  .route("/")
+  .get(fetchedBooks) // GET /books
+  .post(addBook); // POST /books
+
+router
+  .route("/:id")
+  .delete(deleteBook) // DELETE /books/:id
+  .put(updateBook); // PUT /books/:id
+
+module.exports = router;
+```
+
+3. root/`app.js`
+
+```js
+const epxress = require("express");
+const app = epxress();
+const bookRoutes = require("./routes/bookRoute");
+app.use(epxress.json());
+// 👇 Mount book routes on /books
+app.use("/books", bookRoutes);
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
+});
+```
+
+## 📅 Day 12 – delete() & update()
+
+1. controller/`bookController.js`
+
+```js
+// DELETE
+const deleteBook = async (req, res) => {
+  // Access param for deletion throughout `id`
+  const { id } = req.params;
+  try {
+    const deleted = await books.destroy({ where: { id } });
+
+    if (deleted) {
+      res.status(200).json({ message: "Book deleted successfully!" });
+    } else {
+      res.status(404).json({ error: "Book not found." });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete book." });
+  }
+};
+
+// UPDATE
+const updateBook = async (req, res) => {
+  const { id } = req.params;
+  const { bookName, bookPrice, bookGenre, bookAuthor } = req.body;
+
+  try {
+    const updated = await books.update(
+      { bookName, bookPrice, bookGenre, bookAuthor },
+      { where: { id } }
+    );
+
+    if (updated[0] > 0) {
+      res.status(200).json({ message: "Book updated successfully!" });
+    } else {
+      res.status(404).json({ error: "Book not found or no change made." });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update book." });
+  }
+};
+```
