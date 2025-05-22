@@ -24,6 +24,10 @@
 - [ 📅 Day 11 – Lessions](#-day-11---mvcr-models-view-controller-routes--folder-structure)
 - [ 📅 Day 12 – Lessions](#-day-12--delete--update)
 
+- [ 📅 Day 13 – React JS & TS Basic (until another day)]()
+- [ 📅 Day 23 – Cors, SOP Issues & NodeAPI + React](#-day-23--node-api--react--cors-spo)
+- [ 📅 Day 24 – Deep Dive yesterday & Other topics ]()
+
 ---
 
 Here Are the contentss
@@ -628,3 +632,132 @@ const updateBook = async (req, res) => {
   }
 };
 ```
+
+## 📅 Day 23 : Node API + React + CORS (SPO)
+
+🏗️ Project Structure
+
+```bash
+project-root/
+├── server/          # Node.js (Express) Backend Folder
+│   └── index.js
+├── client/          # React Frontend Folder
+│   └── src/
+│       └── App.jsx
+├── README.md
+
+```
+
+### 🛠️ Backend Setup (Node.js + Express + CORS)
+
+1. Install dependencies
+
+```bash
+cd server
+npm init -y
+npm install express cors
+```
+
+2. server/index.js
+
+```js
+const epxress = require("express");
+const app = epxress();
+const bookRoutes = require("./routes/bookRoute");
+const cors = require("cors");
+
+app.use(
+  cors({
+    // origin:"*",
+    origin: "http://localhost:5173",
+  })
+);
+app.use(epxress.json());
+// 👇 Mount book routes on /books
+app.use("/api/books", bookRoutes);
+
+app.listen(4000, () => {
+  console.log("http://localhost:4000");
+});
+```
+
+### ⚛️ Frontend Setup (React with JSX)
+
+1. Setup Via vite
+2. Fetch Data from API - src/`App.jsx`
+
+```js
+import axios from "axios";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import BookCard from "./Components/UI/BookCard";
+const App = () => {
+  const [fetchedBooksAPI, setFetchedBooksAPI] = useState([]);
+  const fetchBooks = async () => {
+    const reponse = await axios.get("http://localhost:4000/api/books");
+    setFetchedBooksAPI((prev) => (prev = reponse?.data?.fetchedBooks));
+  };
+  console.log(fetchedBooksAPI);
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+  return (
+    <main className="bg-black text-white h-[100vh] ">
+      <header className="text-4xl text-center p-10">Books</header>
+      <section className="flex justify-center flex-wrap  gap-3">
+        {fetchedBooksAPI &&
+          fetchedBooksAPI.map((book) => {
+            return <BookCard book={book} />;
+          })}
+      </section>
+    </main>
+  );
+};
+export default App;
+```
+
+### 🚀 Run the Project
+
+1. Start backend & frontend project (at a same time)
+
+### 🧩 Notes
+
+1. CORS is enabled in server/index.js using cors() middleware.
+2. React (SPO) runs on port 3000, Express on 5000.
+3. Ensure both are running concurrently (use separate terminals).
+
+### 📖 Concepts
+
+1. 🔐 What is CORS?
+
+- **CORS (Cross-Origin Resource Sharing)** is a browser security feature that controls which origins (domains) can access resources from a server.
+- When your **React app (localhost:3000)** tries to request data from a **Node.js backend (localhost:5000)**, the browser blocks it unless the server explicitly allows it using CORS headers.
+- **Solution**: Use the cors middleware in your Express backend to allow requests from the frontend.
+
+```js
+const cors = require("cors");
+app.use(cors());
+```
+
+2. ⚛️ What is SPO?
+
+- SPO (Single Page Application) refers to apps like React where the UI is loaded once and dynamically updated using JavaScript — without reloading the page.
+- When your **React app (localhost:3000)** tries to request data from a **Node.js backend (localhost:5000)**, the browser blocks it unless the server explicitly allows it using CORS headers.
+- **Solution**: Use the cors middleware in your Express backend to allow requests from the frontend.
+
+```js
+const cors = require("cors");
+app.use(cors());
+```
+
+## 📅 Day 24
+### Sub Topics
+
+
+## 📅 Day 25
+### Sub Topics
+
+
+## 📅 Day 26
+### Sub Topics
+
