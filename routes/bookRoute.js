@@ -7,6 +7,7 @@ const {
   addBook,
   deleteBook,
   updateBook,
+  getBookById,
 } = require("../controllers/bookController");
 
 // Routes
@@ -17,7 +18,8 @@ router
 
 router
   .route("/:id")
+  .get(getBookById)
   .delete(deleteBook) // DELETE /books/:id
-  .put(updateBook); // PUT /books/:id
+  .patch(updateBook); // patch /books/:id
 
 module.exports = router;
